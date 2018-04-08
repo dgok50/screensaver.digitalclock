@@ -21,6 +21,7 @@ import xbmcgui
 import xbmc
 import random
 import os
+import requests
 from datetime import datetime
 
 Addon = xbmcaddon.Addon('screensaver.digitalclock')
@@ -70,8 +71,10 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         self.switchcounter = 0
         self.iconswitchcounter = 0
         self.logoutcounter = 0
+        self.a1dspcounter = 0
         self.switch = 0
         self.iconswitch = 0
+        self.a1dsp_d = dict()
         self.movementtype = int(Addon.getSetting('movementtype'))
         self.movementspeed = int(Addon.getSetting('movementspeed'))
         self.stayinplace = int(Addon.getSetting('stayinplace'))
@@ -88,6 +91,7 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         self.cputemp = Addon.getSetting('cputemp')
         self.gputemp = Addon.getSetting('gputemp')
         self.hddtemp = Addon.getSetting('hddtemp')
+        self.a1dsp = Addon.getSetting('a1dsp')
         self.fps = Addon.getSetting('fps')
         self.cuptime = Addon.getSetting('cuptime')
         self.tuptime = Addon.getSetting('tuptime')
@@ -230,8 +234,14 @@ class Screensaver(xbmcgui.WindowXMLDialog):
                 self.informationlist.append("$ADDON[screensaver.digitalclock 32295] $INFO[System.CPUTemperature]")
             if self.gputemp == 'true' and xbmc.getInfoLabel('System.GPUTemperature'):
                 self.informationlist.append("$ADDON[screensaver.digitalclock 32296] $INFO[System.GPUTemperature]")
+            if self.a1dsp == 'true':
+                self.informationlist.append("$ADDON[screensaver.digitalclock 32301] TEST")
             if self.hddtemp == 'true' and xbmc.getInfoLabel('System.HddTemperature'):
                 self.informationlist.append("$ADDON[screensaver.digitalclock 32297] $INFO[System.HddTemperature]")
+                
+
+                                
+
             if self.fps == 'true' and xbmc.getInfoLabel('System.FPS'):
                 self.informationlist.append("$ADDON[screensaver.digitalclock 32298] $INFO[System.FPS]")
             if self.cuptime == 'true' and xbmc.getInfoLabel('System.Uptime'):
@@ -358,11 +368,11 @@ class Screensaver(xbmcgui.WindowXMLDialog):
 
     def DisplayTime(self):
         while not self.abort_requested:
-
             #switching information
+
             self.Switch()
 
-			#movement
+            #movement
             if self.movementtype == 0:
                 #random movement
                 self.waitcounter += 1
@@ -488,6 +498,10 @@ class Screensaver(xbmcgui.WindowXMLDialog):
         self.date_control.setLabel(self.date)
         if len(self.informationlist) != 0:
             self.information_control.setLabel(self.information)
+        #a1pr_test
+        if(self.a1dsp_d.get('TEMP') is not None and self.a1dsp_d.get('HUM') is not None and self.a1dsp_d.get('BPRE') is not None and self.a1dsp_d.get('LUX') is not None):
+            self.information_control.setLabel("Темп: "+str("%0.2f" % self.a1dsp_d.get('TEMP'))+"°C  Влажн: "+str("%0.2f" % self.a1dsp_d.get('HUM'))+"%\nДавл: "+str("%0.2f" % self.a1dsp_d.get('BPRE'))+"ммРтСт  Осв: "+str("%0.2f" % self.a1dsp_d.get('LUX'))+"люкс")
+            #self.informationlist.append("$ADDON[screensaver.digitalclock 32301] "+str(self.a1dsp_d['TEMP'])+"*C")
         if self.weathericonf != '0' or self.albumartshow == 'true':
             self.icon_control.setImage(self.icon)
         self.hour_colorcontrol.setLabel(self.hourcolor)
@@ -521,6 +535,21 @@ class Screensaver(xbmcgui.WindowXMLDialog):
                 self.icon = xbmc.getInfoLabel('Player.art(thumb)')
         elif self.weathericonf != '0':
             self.icon = os.path.join(path,"resources/weathericons/",self.weathericonset[int(self.weathericonf)],xbmc.getInfoLabel('Window(Weather).Property(Current.FanartCode)')) + ".png"
+        if self.a1dsp == 'true':
+            self.a1dspcounter += 1
+            if self.a1dspcounter == (self.multiplier*self.infoswitch):
+                self.a1dspcounter = 0
+                r = requests.get("http://192.168.0.174/tmp/arduino_raw.txt")
+                if r.status_code == 200:
+                    content = str(r.content)
+                    content = content.strip("'").strip("b'")
+                    if content.endswith(";"): 
+                        content = content[:-1]
+                        a1dsp_dk = content.split(" ")
+                        for i in a1dsp_dk:
+                            temp_l = i.split(':')
+                            if len(temp_l) >= 2:
+                                self.a1dsp_d[str(temp_l[0])] = float(temp_l[1])
 
     def exit(self):
         self.abort_requested = True

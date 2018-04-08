@@ -284,7 +284,11 @@ msgctxt "#32271"
 msgid "Enable total uptime"
 msgstr ""
 
-#empty strings from id 32272 to 32279
+msgctxt "#32272"
+msgid "Enable a1dsp parser"
+msgstr ""
+
+#empty strings from id 32273 to 32279
 
 msgctxt "#32280"
 msgid "CPU:"
@@ -370,7 +374,11 @@ msgctxt "#32300"
 msgid "Total uptime:"
 msgstr ""
 
-#empty strings from id 32301 to 32309
+msgctxt "#32301"
+msgid "A1DSP:"
+msgstr ""
+
+#empty strings from id 32302 to 32309
 
 msgctxt "#32310"
 msgid "Choose hour color and opacity  - [COLOR $INFO[Skin.String(screensaver.digitalclock.hourcolor)]]($INFO[Skin.String(screensaver.digitalclock.hourcolor.name)])[/COLOR]"

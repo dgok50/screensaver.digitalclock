@@ -36,6 +36,7 @@
 		<setting label="32230" type="bool" id="weatherinfoshow" subsetting="true" visible="eq(-15,true)" default="false"/>
 		<setting id="weathericonformat" type="select" label="32240" subsetting="true" visible="eq(-16,true)" default="1" lvalues="32241|32242|32243|32244|32245"/>
 		<setting label="32250" type="bool" id="albumartshow" subsetting="true" visible="eq(-17,true)" default="false"/>
+		<setting label="32272" type="bool" id="a1dsp" subsetting="true" visible="eq(-18,true)" default="true"/>
 	</category>
 	<category label="32010">
 		<setting label="32310" type="action" action="RunScript(script.skin.helper.colorpicker,skinstring=screensaver.digitalclock.hourcolor)"/>

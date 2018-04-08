@@ -1,7 +1,7 @@
-Digital clock screensaver
+!NOT Digital clock screensaver with a1pr
 =================
 
-Digital clock screensaver with a lot of options.
+#Digital clock screensaver with a lot of options.
 
 These are the options:
 
